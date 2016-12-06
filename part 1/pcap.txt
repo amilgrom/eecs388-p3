@@ -1,0 +1,98 @@
+﻿1. Multiple hosts sent packets on the local network. What are their MAC and IP addresses?
+10.0.2.1 -- 00:26:08:e5:66:07 Local NS
+10.0.2.2 -- 04:0c:ce:d8:0f:fa User
+10.0.2.3 -- 8c:a9:82:50:f0:a6 User
+
+
+2. What type of network does this appear to be (e.g., a large corporation, an ISP backbone, etc.)? Point to evidence from the trace that supports this.
+It appears to be a small personal network.  It is comprised of 3 devices: 2 computers and 1 name server.
+
+
+3. One of the clients connects to an FTP server during the trace.
+(a) What is the DNS hostname of the server it connects to?
+dl.xs4all.nl
+
+
+(b) Is the connection using Active or Passive FTP?
+Active FTP - the client uses a PORT command and not a PASV command.  In active FTP the user specifies the port on their machine that is awaiting the connection and the server connects to it.  In passive FTP the user specifies PASV and the server send the user a port that they should look for data from.
+
+
+(c) Based on the packet capture, what’s one major vulnerability of the FTP protocol?
+Information transferred with FTP is not encrypted, so usernames and passwords sent can be seen in plaintext. 
+
+
+(d) Name at least two network protocols that can be used in place of FTP to provide secure file transfer.
+SFTP or SCP
+
+
+4. The trace shows that at least one of the clients makes HTTPS connections to sites other than Facebook. Pick one of these connections and answer the following:
+(a) What is the domain name of the site the client is connecting to?
+www.google.com
+
+
+(b) Is there any way the HTTPS server can protect against the leak of information in (a)?
+No, the first message sent between the client and the server isn’t encrypted, because a cipher suite hasn’t been chosen yet. 
+
+
+(c) During the TLS handshake, the client provides a list of supported cipher suites. List the cipher suites and name the crypto algorithms used for each.
+Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA (0xc00a)
+Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA (0xc014)
+Cipher Suite: TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA (0x0088)
+Cipher Suite: TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA (0x0087)
+Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA (0x0039)
+Cipher Suite: TLS_DHE_DSS_WITH_AES_256_CBC_SHA (0x0038)
+Cipher Suite: TLS_ECDH_RSA_WITH_AES_256_CBC_SHA (0xc00f)
+Cipher Suite: TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA (0xc005)
+Cipher Suite: TLS_RSA_WITH_CAMELLIA_256_CBC_SHA (0x0084)
+Cipher Suite: TLS_RSA_WITH_AES_256_CBC_SHA (0x0035)
+Cipher Suite: TLS_ECDHE_ECDSA_WITH_RC4_128_SHA (0xc007)
+Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA (0xc009)
+Cipher Suite: TLS_ECDHE_RSA_WITH_RC4_128_SHA (0xc011)
+Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA (0xc013)
+Cipher Suite: TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA (0x0045)
+Cipher Suite: TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA (0x0044)
+Cipher Suite: TLS_DHE_DSS_WITH_RC4_128_SHA (0x0066)
+Cipher Suite: TLS_DHE_RSA_WITH_AES_128_CBC_SHA (0x0033)
+Cipher Suite: TLS_DHE_DSS_WITH_AES_128_CBC_SHA (0x0032)
+Cipher Suite: TLS_ECDH_RSA_WITH_RC4_128_SHA (0xc00c)
+Cipher Suite: TLS_ECDH_RSA_WITH_AES_128_CBC_SHA (0xc00e)
+Cipher Suite: TLS_ECDH_ECDSA_WITH_RC4_128_SHA (0xc002)
+Cipher Suite: TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA (0xc004)
+Cipher Suite: TLS_RSA_WITH_SEED_CBC_SHA (0x0096)
+Cipher Suite: TLS_RSA_WITH_CAMELLIA_128_CBC_SHA (0x0041)
+Cipher Suite: TLS_RSA_WITH_RC4_128_SHA (0x0005)
+Cipher Suite: TLS_RSA_WITH_RC4_128_MD5 (0x0004)
+Cipher Suite: TLS_RSA_WITH_AES_128_CBC_SHA (0x002f)
+Cipher Suite: TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA (0xc008)
+Cipher Suite: TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA (0xc012)
+Cipher Suite: TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA (0x0016)
+Cipher Suite: TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA (0x0013)
+Cipher Suite: TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA (0xc00d)
+Cipher Suite: TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA (0xc003)
+Cipher Suite: SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA (0xfeff)
+Cipher Suite: TLS_RSA_WITH_3DES_EDE_CBC_SHA (0x000a)
+
+
+(d) Are any of these cipher suites worrisome from a security or privacy perspective? Why?
+The TLS_RSA_WITH_RC4_128_MD5 cipher is an unsafe cipher suite for multiple reasons.  RC4 is vulnerable to various attacks such as bit-flipping, and there are key and keystream correlations that make it easy for an attacker to find the key.  Also, MD5 hashes are vulnerable to attacks such as hash extensions and collisions.
+
+
+(e) What cipher suite does the server choose for the connection?
+Cipher Suite: TLS_ECDHE_RSA_WITH_RC4_128_SHA (0xc011)
+
+
+5. One of the clients makes a number of requests to Facebook.
+(a) Even though logins are processed over HTTPS, what is insecure about the way the browser is authenticated to Facebook?
+The browser uses a cookie to authenticate to Facebook, and this cookie is visible when the user sends other requests through HTTP. 
+
+
+(b) How would this let an attacker impersonate the user on Facebook?
+An attacker could grab the user’s cookie and use it as their own. 
+
+
+(c) How can users protect themselves against this type of attack?
+Users can’t protect themselves from this type of attack, but Facebook can protect their users by using HTTPS for all their requests. 
+
+
+(d) What did the user do while on the Facebook site?
+The user goes to the main page and searches for someone’s name (Zakir Durum). The user goes to Zakir’s page and sends him a message with an attachment.
